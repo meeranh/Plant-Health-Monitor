@@ -1,15 +1,10 @@
-const nextConfig = {
-  output: 'export',
-  trailingSlash: true,
-  images: {
-    unoptimized: true
-  },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
-  typescript: {
-    ignoreBuildErrors: true,
-  },
-}
+ import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
 
-export default nextConfig
+/** @type {import('next').NextConfig} */
+const nextConfig = {};
+
+ if (process.env.NODE_ENV === 'development') {
+   await setupDevPlatform();
+ }
+
+export default nextConfig;
