@@ -21,6 +21,7 @@ const DISEASE_OPTIONS = [
   'Tomato Spotted Wilt Virus'
 ]
 
+// eslint-disable-next-line
 interface SensorReadings {
   temperature: number
   humidity: number

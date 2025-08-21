@@ -37,6 +37,7 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
   const [timeUntilNext, setTimeUntilNext] = useState(86400) // 24 hours in seconds
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [lastAnalysis, setLastAnalysis] = useState<DiseaseAnalysis | null>(null)
+	// eslint-disable-next-line
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
   // Countdown timer
@@ -72,6 +73,18 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
     setIsAnalyzing(true)
 
     try {
+      // Create default sensor readings with proper typing
+      const defaultSensorData = {
+        temperature: sensorReadings?.temperature || 0,
+        humidity: sensorReadings?.humidity || 0,
+        soilMoisture: sensorReadings?.soilMoisture || 0,
+        lightLevel: sensorReadings?.infrared || 0,
+        phLevel: sensorReadings?.phLevel || 7,
+        nitrogen: sensorReadings?.nitrogen || 0,
+        phosphorus: sensorReadings?.phosphorus || 0,
+        potassium: sensorReadings?.potassium || 0
+      }
+
       // Call the actual OpenAI API with sensor readings
       const response = await fetch('/api/analyze-plant', {
         method: 'POST',
@@ -80,16 +93,7 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
         },
         body: JSON.stringify({ 
           image: imageData,
-          sensorReadings: sensorReadings || {
-            temperature: 0,
-            humidity: 0,
-            soilMoisture: 0,
-            lightLevel: sensorReadings?.infrared || 0,
-            phLevel: sensorReadings?.phLevel || 7,
-            nitrogen: sensorReadings?.nitrogen || 0,
-            phosphorus: sensorReadings?.phosphorus || 0,
-            potassium: sensorReadings?.potassium || 0
-          }
+          sensorReadings: defaultSensorData
         })
       })
 
