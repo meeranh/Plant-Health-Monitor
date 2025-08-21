@@ -1,0 +1,9 @@
+name = "chilli-monitoring"
+compatibility_date = "2025-08-21"
+
+[build]
+command = "npm run build"
+publish = "out"
+
+[[pages_build_output_dir]]
+value = "out"
