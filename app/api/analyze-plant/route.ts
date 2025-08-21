@@ -1,7 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
 
+export const runtime = 'edge';
+
+// eslint-disable-next-line
 export async function POST(request: NextRequest) {
   try {
+		// eslint-disable-next-line
     const { image } = await request.json()
 
     // TODO: Implement OpenAI Vision API integration

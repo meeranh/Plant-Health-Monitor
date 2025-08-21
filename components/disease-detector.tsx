@@ -21,6 +21,7 @@ export function DiseaseDetector() {
   const [timeUntilNext, setTimeUntilNext] = useState(86400) // 24 hours in seconds
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [lastAnalysis, setLastAnalysis] = useState<DiseaseAnalysis | null>(null)
+	// eslint-disable-next-line
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
   // Countdown timer
