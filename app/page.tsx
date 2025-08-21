@@ -1,11 +1,52 @@
 "use client"
+import { useState, useEffect } from "react"
 import { Separator } from "@/components/ui/separator"
 import { Leaf } from "lucide-react"
 import { SensorReadings } from "@/components/sensor-readings"
 import { ThresholdControls } from "@/components/threshold-controls"
 import { DiseaseDetector } from "@/components/disease-detector"
 
+interface SensorData {
+  temperature: number
+  humidity: number
+  soilMoisture: number
+  nitrogen: number
+  phosphorus: number
+  potassium: number
+  infrared: number
+  phLevel?: number
+}
+
 export default function ChilliMonitoringDashboard() {
+  const [currentSensorReadings, setCurrentSensorReadings] = useState<SensorData>({
+    temperature: 25.4,
+    humidity: 68,
+    soilMoisture: 45,
+    nitrogen: 120,
+    phosphorus: 85,
+    potassium: 95,
+    infrared: 750,
+    phLevel: 6.8,
+  })
+
+  // Simulate real-time data updates (same as in sensor-readings component)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentSensorReadings((prev) => ({
+        temperature: prev.temperature + (Math.random() - 0.5) * 2,
+        humidity: Math.max(0, Math.min(100, prev.humidity + (Math.random() - 0.5) * 5)),
+        soilMoisture: Math.max(0, Math.min(100, prev.soilMoisture + (Math.random() - 0.5) * 3)),
+        nitrogen: Math.max(0, prev.nitrogen + (Math.random() - 0.5) * 10),
+        phosphorus: Math.max(0, prev.phosphorus + (Math.random() - 0.5) * 8),
+        potassium: Math.max(0, prev.potassium + (Math.random() - 0.5) * 12),
+        infrared: Math.max(0, prev.infrared + (Math.random() - 0.5) * 50),
+        phLevel: Math.max(4, Math.min(9, prev.phLevel! + (Math.random() - 0.5) * 0.2)),
+      }))
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20">
       {/* Header */}
@@ -67,7 +108,7 @@ export default function ChilliMonitoringDashboard() {
                 Upload images for automated disease analysis and recommendations
               </p>
             </div>
-            <DiseaseDetector />
+            <DiseaseDetector sensorReadings={currentSensorReadings} />
           </div>
         </div>
       </div>

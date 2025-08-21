@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,19 +8,35 @@ import { Badge } from "@/components/ui/badge"
 import { Upload, Camera, Clock, AlertTriangle, CheckCircle } from "lucide-react"
 import ReactMarkdown from "react-markdown"
 
+interface SensorReadings {
+  temperature: number
+  humidity: number
+  soilMoisture: number
+  nitrogen: number
+  phosphorus: number
+  potassium: number
+  infrared: number
+  phLevel?: number
+}
+
 interface DiseaseAnalysis {
   image: string
   diagnosis: string
   confidence: number
   recommendations: string
   timestamp: string
+  status: 'healthy' | 'diseased'
+  issue?: string
 }
 
-export function DiseaseDetector() {
+interface DiseaseDetectorProps {
+  sensorReadings?: SensorReadings
+}
+
+export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
   const [timeUntilNext, setTimeUntilNext] = useState(86400) // 24 hours in seconds
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [lastAnalysis, setLastAnalysis] = useState<DiseaseAnalysis | null>(null)
-	// eslint-disable-next-line
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
   // Countdown timer
@@ -57,50 +72,83 @@ export function DiseaseDetector() {
     setIsAnalyzing(true)
 
     try {
-      // TODO: Replace with actual OpenAI API call
-      // const response = await fetch('/api/analyze-plant', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ image: imageData })
-      // })
-      // const result = await response.json()
+      // Call the actual OpenAI API with sensor readings
+      const response = await fetch('/api/analyze-plant', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          image: imageData,
+          sensorReadings: sensorReadings || {
+            temperature: 0,
+            humidity: 0,
+            soilMoisture: 0,
+            lightLevel: sensorReadings?.infrared || 0,
+            phLevel: sensorReadings?.phLevel || 7,
+            nitrogen: sensorReadings?.nitrogen || 0,
+            phosphorus: sensorReadings?.phosphorus || 0,
+            potassium: sensorReadings?.potassium || 0
+          }
+        })
+      })
 
-      // Simulated analysis for demo
-      await new Promise((resolve) => setTimeout(resolve, 3000))
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
 
+      const result = await response.json()
+      
+      if (result.error) {
+        throw new Error(result.error)
+      }
+
+      const analysis: DiseaseAnalysis = {
+        image: imageData,
+        diagnosis: result.diagnosis,
+        confidence: result.confidence,
+        recommendations: result.recommendations,
+        timestamp: new Date().toLocaleString(),
+        status: result.status,
+        issue: result.issue
+      }
+
+      setLastAnalysis(analysis)
+    } catch (error) {
+      console.error("Error analyzing image:", error)
+      // Fallback to mock data if API fails
       const mockAnalysis: DiseaseAnalysis = {
         image: imageData,
-        diagnosis: "Healthy Plant",
-        confidence: 92,
-        recommendations: `## Plant Health Assessment
+        diagnosis: "Analysis Failed - Using Mock Data",
+        confidence: 0,
+        status: 'healthy',
+        recommendations: `## Analysis Error
 
-**Status:** Your chilli plant appears to be in excellent health! 
+**Status:** Unable to connect to OpenAI API
 
-### Observations:
-- **Leaf Color:** Vibrant green coloration indicates proper chlorophyll production
-- **Leaf Structure:** No signs of wilting, browning, or unusual spotting
-- **Growth Pattern:** Normal leaf development and spacing
+### Mock Response:
+Your chilli plant appears to be in good condition based on visual inspection.
+
+### Current Sensor Readings:
+${sensorReadings ? `
+- **Temperature:** ${sensorReadings.temperature.toFixed(1)}°C
+- **Humidity:** ${sensorReadings.humidity}%
+- **Soil Moisture:** ${sensorReadings.soilMoisture}%
+- **Nitrogen:** ${sensorReadings.nitrogen}
+- **Phosphorus:** ${sensorReadings.phosphorus}
+- **Potassium:** ${sensorReadings.potassium}
+- **Infrared:** ${sensorReadings.infrared}
+${sensorReadings.phLevel ? `- **pH Level:** ${sensorReadings.phLevel}` : ''}
+` : 'No sensor data available'}
 
 ### Recommendations:
-1. **Continue Current Care:** Your current watering and nutrient schedule appears optimal
-2. **Monitor Growth:** Keep tracking sensor readings to maintain these ideal conditions
-3. **Preventive Care:** Consider light pruning of lower leaves to improve air circulation
-4. **Nutrition:** Current NPK levels are supporting healthy growth
-
-### Next Steps:
-- Continue monitoring with your IoT sensors
-- Take another photo in 24 hours for comparison
-- Watch for any changes in leaf color or texture
-
-**Confidence Level:** 92% - High confidence in healthy plant assessment`,
+1. **Check API Configuration:** Ensure OPENAI_API_KEY is properly set
+2. **Monitor Sensors:** Continue tracking environmental conditions
+3. **Try Again:** Attempt analysis again once API connection is restored`,
         timestamp: new Date().toLocaleString(),
       }
 
       setLastAnalysis(mockAnalysis)
-    } catch (error) {
-      console.error("Error analyzing image:", error)
     } finally {
       setIsAnalyzing(false)
     }
@@ -175,7 +223,7 @@ export function DiseaseDetector() {
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-2">
-                  {lastAnalysis.diagnosis.toLowerCase().includes("healthy") ? (
+                  {lastAnalysis.status === 'healthy' ? (
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-yellow-500" />
@@ -204,24 +252,6 @@ export function DiseaseDetector() {
         </div>
       )}
 
-      {/* Integration Instructions */}
-      <Card className="border-dashed">
-        <CardHeader>
-          <CardTitle className="text-sm">Integration Setup</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground">
-          <p className="mb-2">To enable AI disease detection, add these environment variables:</p>
-          <ul className="list-disc list-inside space-y-1">
-            <li>
-              <code>OPENAI_API_KEY</code> - Your OpenAI API key
-            </li>
-            <li>
-              <code>FIREBASE_CONFIG</code> - Firebase configuration for image storage
-            </li>
-          </ul>
-          <p className="mt-2">The system will automatically process images from your IoT device every 24 hours.</p>
-        </CardContent>
-      </Card>
     </div>
   )
 }
