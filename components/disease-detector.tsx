@@ -11,12 +11,10 @@ import ReactMarkdown from "react-markdown"
 interface SensorReadings {
   temperature: number
   humidity: number
-  soilMoisture: number
-  nitrogen: number
-  phosphorus: number
-  potassium: number
-  infrared: number
-  phLevel?: number
+  moisture: number
+  N: number
+  P: number
+  K: number
 }
 
 interface DiseaseAnalysis {
@@ -25,7 +23,7 @@ interface DiseaseAnalysis {
   confidence: number
   recommendations: string
   timestamp: string
-  status: 'healthy' | 'diseased'
+  status: "healthy" | "diseased"
   issue?: string
 }
 
@@ -37,7 +35,6 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
   const [timeUntilNext, setTimeUntilNext] = useState(86400) // 24 hours in seconds
   const [isAnalyzing, setIsAnalyzing] = useState(false)
   const [lastAnalysis, setLastAnalysis] = useState<DiseaseAnalysis | null>(null)
-	// eslint-disable-next-line
   const [uploadedImage, setUploadedImage] = useState<string | null>(null)
 
   // Countdown timer
@@ -73,28 +70,26 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
     setIsAnalyzing(true)
 
     try {
-      // Create default sensor readings with proper typing
-      const defaultSensorData = {
+      // Create sensor data for analysis
+      const sensorData = {
         temperature: sensorReadings?.temperature || 0,
         humidity: sensorReadings?.humidity || 0,
-        soilMoisture: sensorReadings?.soilMoisture || 0,
-        lightLevel: sensorReadings?.infrared || 0,
-        phLevel: sensorReadings?.phLevel || 7,
-        nitrogen: sensorReadings?.nitrogen || 0,
-        phosphorus: sensorReadings?.phosphorus || 0,
-        potassium: sensorReadings?.potassium || 0
+        moisture: sensorReadings?.moisture || 0,
+        N: sensorReadings?.N || 0,
+        P: sensorReadings?.P || 0,
+        K: sensorReadings?.K || 0,
       }
 
-      // Call the actual OpenAI API with sensor readings
-      const response = await fetch('/api/analyze-plant', {
-        method: 'POST',
+      // Call the OpenAI API with sensor readings
+      const response = await fetch("/api/analyze-plant", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           image: imageData,
-          sensorReadings: defaultSensorData
-        })
+          sensorReadings: sensorData,
+        }),
       })
 
       if (!response.ok) {
@@ -102,7 +97,7 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
       }
 
       const result = await response.json()
-      
+
       if (result.error) {
         throw new Error(result.error)
       }
@@ -114,7 +109,7 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
         recommendations: result.recommendations,
         timestamp: new Date().toLocaleString(),
         status: result.status,
-        issue: result.issue
+        issue: result.issue,
       }
 
       setLastAnalysis(analysis)
@@ -125,7 +120,7 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
         image: imageData,
         diagnosis: "Analysis Failed - Using Mock Data",
         confidence: 0,
-        status: 'healthy',
+        status: "healthy",
         recommendations: `## Analysis Error
 
 **Status:** Unable to connect to OpenAI API
@@ -134,16 +129,18 @@ export function DiseaseDetector({ sensorReadings }: DiseaseDetectorProps) {
 Your chilli plant appears to be in good condition based on visual inspection.
 
 ### Current Sensor Readings:
-${sensorReadings ? `
+${
+  sensorReadings
+    ? `
 - **Temperature:** ${sensorReadings.temperature.toFixed(1)}°C
 - **Humidity:** ${sensorReadings.humidity}%
-- **Soil Moisture:** ${sensorReadings.soilMoisture}%
-- **Nitrogen:** ${sensorReadings.nitrogen}
-- **Phosphorus:** ${sensorReadings.phosphorus}
-- **Potassium:** ${sensorReadings.potassium}
-- **Infrared:** ${sensorReadings.infrared}
-${sensorReadings.phLevel ? `- **pH Level:** ${sensorReadings.phLevel}` : ''}
-` : 'No sensor data available'}
+- **Soil Moisture:** ${sensorReadings.moisture}%
+- **Nitrogen:** ${sensorReadings.N}
+- **Phosphorus:** ${sensorReadings.P}
+- **Potassium:** ${sensorReadings.K}
+`
+    : "No sensor data available"
+}
 
 ### Recommendations:
 1. **Check API Configuration:** Ensure OPENAI_API_KEY is properly set
@@ -227,7 +224,7 @@ ${sensorReadings.phLevel ? `- **pH Level:** ${sensorReadings.phLevel}` : ''}
               </div>
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-2">
-                  {lastAnalysis.status === 'healthy' ? (
+                  {lastAnalysis.status === "healthy" ? (
                     <CheckCircle className="h-5 w-5 text-green-500" />
                   ) : (
                     <AlertTriangle className="h-5 w-5 text-yellow-500" />
@@ -255,7 +252,6 @@ ${sensorReadings.phLevel ? `- **pH Level:** ${sensorReadings.phLevel}` : ''}
           </Card>
         </div>
       )}
-
     </div>
   )
 }

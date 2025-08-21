@@ -40,6 +40,36 @@
   --sidebar-ring: oklch(0.55 0.15 25); /* Orange sidebar ring */
 }
 
+.dark {
+  --background: oklch(0.15 0.02 85); /* Dark brown background */
+  --foreground: oklch(0.97 0.01 85); /* Light cream text */
+  --card: oklch(0.18 0.02 85); /* Darker brown cards */
+  --card-foreground: oklch(0.97 0.01 85); /* Light cream card text */
+  --popover: oklch(0.18 0.02 85); /* Darker brown popover */
+  --popover-foreground: oklch(0.97 0.01 85); /* Light cream popover text */
+  --primary: oklch(0.55 0.15 25); /* Gruvbox orange */
+  --primary-foreground: oklch(0.97 0.01 85); /* Light text on primary */
+  --secondary: oklch(0.25 0.02 85); /* Dark brown secondary */
+  --secondary-foreground: oklch(0.97 0.01 85); /* Light text on secondary */
+  --muted: oklch(0.25 0.02 85); /* Dark brown muted */
+  --muted-foreground: oklch(0.65 0.02 85); /* Medium cream muted text */
+  --accent: oklch(0.25 0.02 85); /* Dark brown accent */
+  --accent-foreground: oklch(0.97 0.01 85); /* Light text on accent */
+  --destructive: oklch(0.5 0.2 15); /* Gruvbox red */
+  --destructive-foreground: oklch(0.97 0.01 85); /* Light text on destructive */
+  --border: oklch(0.25 0.02 85); /* Dark brown border */
+  --input: oklch(0.25 0.02 85); /* Dark brown input border */
+  --ring: oklch(0.55 0.15 25); /* Orange focus ring */
+  --sidebar: oklch(0.18 0.02 85); /* Darker brown sidebar */
+  --sidebar-foreground: oklch(0.97 0.01 85); /* Light cream sidebar text */
+  --sidebar-primary: oklch(0.55 0.15 25); /* Orange sidebar primary */
+  --sidebar-primary-foreground: oklch(0.97 0.01 85); /* Light sidebar primary text */
+  --sidebar-accent: oklch(0.25 0.02 85); /* Dark brown sidebar accent */
+  --sidebar-accent-foreground: oklch(0.97 0.01 85); /* Light sidebar accent text */
+  --sidebar-border: oklch(0.25 0.02 85); /* Dark brown sidebar border */
+  --sidebar-ring: oklch(0.55 0.15 25); /* Orange sidebar ring */
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

@@ -9,38 +9,32 @@ import { DiseaseDetector } from "@/components/disease-detector"
 interface SensorData {
   temperature: number
   humidity: number
-  soilMoisture: number
-  nitrogen: number
-  phosphorus: number
-  potassium: number
-  infrared: number
-  phLevel?: number
+  moisture: number
+  N: number
+  P: number
+  K: number
 }
 
 export default function ChilliMonitoringDashboard() {
   const [currentSensorReadings, setCurrentSensorReadings] = useState<SensorData>({
     temperature: 25.4,
     humidity: 68,
-    soilMoisture: 45,
-    nitrogen: 120,
-    phosphorus: 85,
-    potassium: 95,
-    infrared: 750,
-    phLevel: 6.8,
+    moisture: 45,
+    N: 120,
+    P: 85,
+    K: 95,
   })
 
-  // Simulate real-time data updates (same as in sensor-readings component)
+  // Simulate real-time data updates
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentSensorReadings((prev) => ({
         temperature: prev.temperature + (Math.random() - 0.5) * 2,
         humidity: Math.max(0, Math.min(100, prev.humidity + (Math.random() - 0.5) * 5)),
-        soilMoisture: Math.max(0, Math.min(100, prev.soilMoisture + (Math.random() - 0.5) * 3)),
-        nitrogen: Math.max(0, prev.nitrogen + (Math.random() - 0.5) * 10),
-        phosphorus: Math.max(0, prev.phosphorus + (Math.random() - 0.5) * 8),
-        potassium: Math.max(0, prev.potassium + (Math.random() - 0.5) * 12),
-        infrared: Math.max(0, prev.infrared + (Math.random() - 0.5) * 50),
-        phLevel: Math.max(4, Math.min(9, prev.phLevel! + (Math.random() - 0.5) * 0.2)),
+        moisture: Math.max(0, Math.min(100, prev.moisture + (Math.random() - 0.5) * 3)),
+        N: Math.max(0, prev.N + (Math.random() - 0.5) * 10),
+        P: Math.max(0, prev.P + (Math.random() - 0.5) * 8),
+        K: Math.max(0, prev.K + (Math.random() - 0.5) * 12),
       }))
     }, 3000)
 
@@ -59,7 +53,7 @@ export default function ChilliMonitoringDashboard() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-foreground">Chilli Plant Monitor</h1>
-                <p className="text-sm text-muted-foreground">Real-time IoT monitoring and AI disease detection</p>
+                <p className="text-sm text-muted-foreground">Real-time IoT monitoring with Firebase integration</p>
               </div>
             </div>
           </div>
@@ -76,7 +70,7 @@ export default function ChilliMonitoringDashboard() {
                 <div className="w-2 h-8 bg-gradient-to-b from-primary to-primary/60 rounded-full"></div>
                 <h2 className="text-3xl font-bold text-foreground tracking-tight">Live Sensor Data</h2>
               </div>
-              <p className="text-muted-foreground mt-1 ml-5">Real-time monitoring of environmental conditions</p>
+              <p className="text-muted-foreground mt-1 ml-5">Real-time monitoring from Firebase</p>
             </div>
             <SensorReadings />
           </div>
@@ -90,7 +84,7 @@ export default function ChilliMonitoringDashboard() {
                 <div className="w-2 h-8 bg-gradient-to-b from-secondary to-secondary/60 rounded-full"></div>
                 <h2 className="text-3xl font-bold text-foreground tracking-tight">Threshold Configuration</h2>
               </div>
-              <p className="text-muted-foreground mt-1 ml-5">Configure automated control parameters and intervals</p>
+              <p className="text-muted-foreground mt-1 ml-5">Configure automated control parameters</p>
             </div>
             <ThresholdControls />
           </div>

@@ -1,44 +1,38 @@
 {
-  "name": "chilli-monitoring",
+  "name": "chilli-plant-monitor",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "export": "next build && next export",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "preview": "npm run pages:build && wrangler pages dev",
-    "deploy": "npm run pages:build && wrangler pages deploy"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@radix-ui/react-label": "^2.1.7",
-    "@radix-ui/react-separator": "^1.1.7",
-    "@radix-ui/react-slider": "^1.3.6",
-    "@radix-ui/react-slot": "^1.2.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
+    "@ai-sdk/openai": "^1.0.0",
+    "@radix-ui/react-label": "^2.1.0",
+    "@radix-ui/react-separator": "^1.1.0",
+    "@radix-ui/react-slot": "^1.1.0",
+    "ai": "^4.0.0",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "firebase": "^11.0.0",
     "lucide-react": "^0.540.0",
     "next": "15.2.4",
-    "next-themes": "^0.4.6",
-    "openai": "^5.13.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-markdown": "^10.1.0",
-    "tailwind-merge": "^3.3.1"
+    "react-markdown": "^10.0.0",
+    "tailwind-merge": "^3.0.0"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.14",
-    "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
+    "@tailwindcss/postcss": "^4.1.9",
+    "@types/node": "^20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^9.0.0",
     "eslint-config-next": "15.2.4",
-    "tailwindcss": "^4.1.12",
-    "tw-animate-css": "^1.3.7",
-    "typescript": "^5"
+    "tailwindcss": "^4.1.9",
+    "tw-animate-css": "^1.3.0",
+    "typescript": "^5.0.0"
   }
 }
