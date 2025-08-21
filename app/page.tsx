@@ -5,6 +5,8 @@ import { Leaf } from "lucide-react"
 import { SensorReadings } from "@/components/sensor-readings"
 import { ThresholdControls } from "@/components/threshold-controls"
 import { DiseaseDetector } from "@/components/disease-detector"
+import { db } from "@/lib/firebase"
+import { doc, onSnapshot } from "firebase/firestore"
 
 interface SensorData {
   temperature: number
@@ -17,28 +19,36 @@ interface SensorData {
 
 export default function ChilliMonitoringDashboard() {
   const [currentSensorReadings, setCurrentSensorReadings] = useState<SensorData>({
-    temperature: 25.4,
-    humidity: 68,
-    moisture: 45,
-    N: 120,
-    P: 85,
-    K: 95,
+    temperature: 26.8,
+    humidity: 65,
+    moisture: 52,
+    N: 118,
+    P: 92,
+    K: 87,
   })
 
-  // Simulate real-time data updates
+  // Subscribe to real sensor data for disease detector
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSensorReadings((prev) => ({
-        temperature: prev.temperature + (Math.random() - 0.5) * 2,
-        humidity: Math.max(0, Math.min(100, prev.humidity + (Math.random() - 0.5) * 5)),
-        moisture: Math.max(0, Math.min(100, prev.moisture + (Math.random() - 0.5) * 3)),
-        N: Math.max(0, prev.N + (Math.random() - 0.5) * 10),
-        P: Math.max(0, prev.P + (Math.random() - 0.5) * 8),
-        K: Math.max(0, prev.K + (Math.random() - 0.5) * 12),
-      }))
-    }, 3000)
+    if (!db) {
+      console.warn("Firebase not available, using fallback data")
+      return
+    }
 
-    return () => clearInterval(interval)
+    const unsubscribe = onSnapshot(doc(db, "readings", "latest"), (doc) => {
+      if (doc.exists()) {
+        const data = doc.data()
+        setCurrentSensorReadings({
+          temperature: data.temperature || 26.8,
+          humidity: data.humidity || 65,
+          moisture: data.moisture || 52,
+          N: data.N || 118,
+          P: data.P || 92,
+          K: data.K || 87,
+        })
+      }
+    })
+
+    return () => unsubscribe()
   }, [])
 
   return (
