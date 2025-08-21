@@ -1,6 +1,0 @@
-name = "chilli-monitoring"
-compatibility_date = "2025-08-21"
-pages_build_output_dir = "out"
-
-[build]
-command = "npm run build"
